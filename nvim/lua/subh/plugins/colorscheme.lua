@@ -102,4 +102,18 @@ return {
     "EdenEast/nightfox.nvim",
     lazy = true,
   },
+
+   -- TokyoDark - Dark variant of Tokyo theme (NEW!)
+  {
+    "tiagovla/tokyodark.nvim",
+    lazy = true,
+    opts = {
+      transparent_background = false,
+      gamma = 1.00,
+      styles = {
+        comments = { italic = true },
+        keywords = { italic = true },
+      },
+    },
+  },
 }
