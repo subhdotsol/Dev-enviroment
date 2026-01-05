@@ -107,13 +107,8 @@ return {
   {
     "tiagovla/tokyodark.nvim",
     lazy = true,
-    opts = {
-      transparent_background = false,
-      gamma = 1.00,
-      styles = {
-        comments = { italic = true },
-        keywords = { italic = true },
-      },
-    },
-  },
+    config = function()
+      require("tokyodark").setup({})
+    end,
+  }
 }
