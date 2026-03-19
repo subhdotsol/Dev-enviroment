@@ -1,9 +1,8 @@
 return {
-  -- ACTIVE THEME: TokyoNight (currently enabled)
+  -- TokyoNight
   {
     "folke/tokyonight.nvim",
-    priority = 1000,
-    lazy = false,
+    lazy = true,
     config = function()
       local bg = "#011628"
       local bg_dark = "#011423"
@@ -35,7 +34,6 @@ return {
           colors.fg_sidebar = fg_dark
         end,
       })
-      vim.cmd([[colorscheme tokyonight]])
     end,
   },
 
@@ -71,13 +69,17 @@ return {
     },
   },
 
-  -- Gruvbox - Classic retro theme
+  -- ACTIVE THEME: Gruvbox (currently enabled)
   {
     "ellisonleao/gruvbox.nvim",
-    lazy = true,
-    opts = {
-      contrast = "hard", -- soft, medium, hard
-    },
+    priority = 1000,
+    lazy = false,
+    config = function()
+      require("gruvbox").setup({
+        contrast = "hard", -- soft, medium, hard
+      })
+      vim.cmd([[colorscheme gruvbox]])
+    end,
   },
 
   -- Sonokai - High contrast theme
@@ -110,5 +112,11 @@ return {
     config = function()
       require("tokyodark").setup({})
     end,
-  }
+  },
+
+  -- Shale - Clean, dark theme based on shale rocks
+  {
+    "smit4k/shale.nvim",
+    lazy = true,
+  },
 }

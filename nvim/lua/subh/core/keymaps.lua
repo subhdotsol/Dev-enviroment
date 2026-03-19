@@ -31,5 +31,25 @@ keymap.set("n", "<leader>tn", "<cmd>tabn<CR>", { desc = "Go to next tab" }) --  
 keymap.set("n", "<leader>tp", "<cmd>tabp<CR>", { desc = "Go to previous tab" }) --  go to previous tab
 keymap.set("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open current buffer in new tab" }) --  move current buffer to new tab
 
--- For colour themes
-vim.keymap.set("n", "<leader>th", "<cmd>Telescope colorscheme<CR>", { desc = "Pick theme" })
+-- For colour themes (loads all lazy colorscheme plugins first so they appear in the picker)
+vim.keymap.set("n", "<leader>th", function()
+  -- Load all lazy-loaded colorscheme plugins so they show up in Telescope
+  for _, plugin in ipairs(require("lazy").plugins()) do
+    if plugin.name and (
+      plugin.name:match("tokyonight") or
+      plugin.name:match("catppuccin") or
+      plugin.name:match("rose%-pine") or
+      plugin.name:match("kanagawa") or
+      plugin.name:match("gruvbox") or
+      plugin.name:match("sonokai") or
+      plugin.name:match("nord") or
+      plugin.name:match("nightfox") or
+      plugin.name:match("tokyodark") or
+      plugin.name:match("shale")
+    ) then
+      require("lazy").load({ plugins = { plugin.name } })
+    end
+  end
+  -- Open Telescope colorscheme picker with live preview
+  require("telescope.builtin").colorscheme({ enable_preview = true })
+end, { desc = "Pick theme" })

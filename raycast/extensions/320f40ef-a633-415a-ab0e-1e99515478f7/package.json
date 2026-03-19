@@ -16,7 +16,6 @@
     "andreaselia",
     "stuart",
     "tonka3000",
-    "dancannon",
     "pernielsentikaer",
     "stevensd2m",
     "erics118",
@@ -27,7 +26,6 @@
     "rfaccio",
     "badta5te",
     "andyburris",
-    "thomaslombart",
     "rhesamu",
     "themitpatel",
     "litomore",
@@ -42,11 +40,14 @@
     "joshkat",
     "CaffeineCat",
     "AdrianKokot",
-    "xmok"
+    "validate",
+    "xmok",
+    "hugodemenez"
   ],
   "pastContributors": [
     "bkeys818",
-    "jonasengelmann"
+    "jonasengelmann",
+    "thomaslombart"
   ],
   "debug": {
     "reloadShortcut": {
@@ -181,9 +182,9 @@
       "name": "nowPlayingMenuBar",
       "title": "Menu Bar Player",
       "subtitle": "Spotify",
-      "description": "See what's currently playing in your Menu Bar. Click for further actions, such as Play/Pause, Like/Dislike, Skip, Start Radio, Add to Playlist, Connect Device and more. Refreshes every 10 seconds.",
+      "description": "See what's currently playing in your Menu Bar. Click for further actions, such as Play/Pause, Like/Dislike, Skip, Start Radio, Add to Playlist, Connect Device and more. Refreshes every 30 seconds.",
       "mode": "menu-bar",
-      "interval": "10s",
+      "interval": "30s",
       "preferences": [
         {
           "name": "hideIconWhenIdle",
@@ -430,7 +431,7 @@
       "title": "Current Track",
       "description": "Show the current song/episode state.",
       "mode": "no-view",
-      "interval": "30s",
+      "interval": "1m",
       "disabledByDefault": true
     },
     {
@@ -492,7 +493,7 @@
           "name": "description",
           "placeholder": "Playlist description",
           "type": "text",
-          "required": true
+          "required": false
         }
       ]
     },
