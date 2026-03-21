@@ -3,6 +3,8 @@ return {
   dependencies = {
     "williamboman/mason-lspconfig.nvim",
     "WhoIsSethDaniel/mason-tool-installer.nvim",
+    "hrsh7th/nvim-cmp",
+    "nvim/nvim-lspconfig",
   },
   config = function()
     -- import mason
@@ -53,4 +55,35 @@ return {
       },
     })
   end,
+
+  {
+    "neovim/nvim-lspconfig",
+    dependencies = { "williamboman/mason.nvim", "williamboman/mason-lspconfig.nvim" },
+    config = function()
+      require("mason").setup()
+      require("mason-lspconfig").setup({ ensure_installed = { "clangd", "rust_analyzer" } })
+
+      vim.lsp.config("clangd", {})
+      vim.lsp.config("rust_analyzer", {
+        settings = { ["rust-analyzer"] = { checkOnSave = { command = "clippy" } } },
+      })
+
+      vim.lsp.enable("clangd")
+      vim.lsp.enable("rust_analyzer")
+    end,
+  },
+  {
+    "hrsh7th/nvim-cmp",
+    dependencies = { "hrsh7th/cmp-nvim-lsp" },
+    config = function()
+      local cmp = require("cmp")
+      cmp.setup({
+        mapping = cmp.mapping.preset.insert({
+          ["<C-Space>"] = cmp.mapping.complete(),
+          ["<CR>"] = cmp.mapping.confirm({ select = true }),
+        }),
+        sources = { { name = "nvim_lsp" } },
+      })
+    end,
+  },
 }

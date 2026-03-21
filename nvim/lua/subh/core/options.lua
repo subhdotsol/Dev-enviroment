@@ -1,5 +1,16 @@
 vim.cmd("let g:netrw_liststyle = 3")
 
+vim.diagnostic.config({
+  virtual_text = {
+    prefix = "■", -- or "●", "▶", "»"
+    spacing = 4,
+  },
+  signs            = true,
+  underline        = true,
+  update_in_insert = true,
+  severity_sort    = true,
+})
+
 local opt = vim.opt -- for conciseness
 
 -- line numbers
