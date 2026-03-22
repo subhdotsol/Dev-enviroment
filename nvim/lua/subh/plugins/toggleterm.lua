@@ -10,7 +10,7 @@ return {
           return vim.o.columns * 0.4
         end
       end,
-      open_mapping = [[<C-\>]], -- main toggle: Ctrl+\
+      open_mapping = [[<C-t>]], -- main toggle: Ctrl+\
       hide_numbers = true,
       shade_terminals = true,
       shading_factor = 2,
