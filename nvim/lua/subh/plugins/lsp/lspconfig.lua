@@ -135,20 +135,21 @@ return {
           })
         end,
         ["rust_analyzer"] = function()
-  lspconfig["rust_analyzer"].setup({
-    capabilities = capabilities,
-    settings = {
-      ["rust-analyzer"] = {
-        cargo      = { features = "all" },
-        checkOnSave = true,
-        check      = { command = "clippy" },
-        imports    = { group = { enable = false } },
-        completion = { postfix = { enable = false } },
-      },
-    },
-  })
-end,
+          lspconfig["rust_analyzer"].setup({
+            capabilities = capabilities,
+            settings = {
+              ["rust-analyzer"] = {
+                cargo = { features = "all" },
+                checkOnSave = true,
+                check = { command = "clippy" },
+                imports = { group = { enable = false } },
+                completion = { postfix = { enable = false } },
+              },
+            },
+          })
+        end,
       },
     })
   end,
 }
+
