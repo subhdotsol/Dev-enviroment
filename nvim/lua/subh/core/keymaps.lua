@@ -9,6 +9,14 @@ local keymap = vim.keymap -- for conciseness
 -- use jk to exit insert mode
 keymap.set("i", "jk", "<ESC>", { desc = "Exit insert mode with jk" })
 
+-- Jump to the end of line in insert mode --
+keymap.set("i", ",,", "<Esc>A", { noremap = true })
+
+-- For LSP docs --
+vim.keymap.set("n", "<leader>d", vim.lsp.buf.definition, { noremap = true, silent = true })
+-- Show hover docs
+vim.keymap.set("n", "K", vim.lsp.buf.hover, { noremap = true, silent = true })
+
 -- clear search highlights
 keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
 
@@ -35,18 +43,21 @@ keymap.set("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open current buffer
 vim.keymap.set("n", "<leader>th", function()
   -- Load all lazy-loaded colorscheme plugins so they show up in Telescope
   for _, plugin in ipairs(require("lazy").plugins()) do
-    if plugin.name and (
-      plugin.name:match("tokyonight") or
-      plugin.name:match("catppuccin") or
-      plugin.name:match("rose%-pine") or
-      plugin.name:match("kanagawa") or
-      plugin.name:match("gruvbox") or
-      plugin.name:match("sonokai") or
-      plugin.name:match("nord") or
-      plugin.name:match("nightfox") or
-      plugin.name:match("tokyodark") or
-      plugin.name:match("shale")
-    ) then
+    if
+      plugin.name
+      and (
+        plugin.name:match("tokyonight")
+        or plugin.name:match("catppuccin")
+        or plugin.name:match("rose%-pine")
+        or plugin.name:match("kanagawa")
+        or plugin.name:match("gruvbox")
+        or plugin.name:match("sonokai")
+        or plugin.name:match("nord")
+        or plugin.name:match("nightfox")
+        or plugin.name:match("tokyodark")
+        or plugin.name:match("shale")
+      )
+    then
       require("lazy").load({ plugins = { plugin.name } })
     end
   end
