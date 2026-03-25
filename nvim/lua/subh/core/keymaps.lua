@@ -12,6 +12,11 @@ keymap.set("i", "jk", "<ESC>", { desc = "Exit insert mode with jk" })
 -- Jump to the end of line in insert mode --
 keymap.set("i", ",,", "<Esc>A", { noremap = true })
 
+keymap.set("n", "<C-n>", "<cmd>m .+1<CR>==", { desc = "Move line down", silent = true })
+keymap.set("n", "<C-p>", "<cmd>m .-2<CR>==", { desc = "Move line up", silent = true })
+keymap.set("v", "<C-n>", ":m '>+1<CR>gv=gv", { desc = "Move selection down", silent = true })
+keymap.set("v", "<C-p>", ":m '<-2<CR>gv=gv", { desc = "Move selection up", silent = true })
+
 -- For LSP docs --
 vim.keymap.set("n", "<leader>d", vim.lsp.buf.definition, { noremap = true, silent = true })
 -- Show hover docs
