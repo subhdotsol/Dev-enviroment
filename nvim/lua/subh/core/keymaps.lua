@@ -40,7 +40,7 @@ keymap.set("n", "<leader>tp", "<cmd>tabp<CR>", { desc = "Go to previous tab" }) 
 keymap.set("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open current buffer in new tab" }) --  move current buffer to new tab
 
 -- For colour themes (loads all lazy colorscheme plugins first so they appear in the picker)
-vim.keymap.set("n", "<leader>th", function()
+vim.keymap.set("n", "<leader>tm", function()
   -- Load all lazy-loaded colorscheme plugins so they show up in Telescope
   for _, plugin in ipairs(require("lazy").plugins()) do
     if
