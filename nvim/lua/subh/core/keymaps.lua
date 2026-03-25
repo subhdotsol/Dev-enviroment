@@ -9,6 +9,9 @@ local keymap = vim.keymap -- for conciseness
 -- use jk to exit insert mode
 keymap.set("i", "jk", "<ESC>", { desc = "Exit insert mode with jk" })
 
+-- quick save --
+vim.keymap.set("n", "<leader>w", "<cmd>w<cr>")
+
 -- Jump to the end of line in insert mode --
 keymap.set("i", ",,", "<Esc>A", { noremap = true })
 
