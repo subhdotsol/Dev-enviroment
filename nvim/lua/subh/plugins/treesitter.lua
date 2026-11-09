@@ -1,27 +1,12 @@
 return {
-  "nvim-treesitter/nvim-treesitter",
-  event = { "BufReadPre", "BufNewFile" },
-  build = ":TSUpdate",
-  dependencies = {
-    "windwp/nvim-ts-autotag",
-  },
-  config = function()
-    -- import nvim-treesitter plugin
-    local treesitter = require("nvim-treesitter.configs")
-
-    -- configure treesitter
-    treesitter.setup({ -- enable syntax highlighting
-      highlight = {
-        enable = true,
-      },
-      -- enable indentation
-      indent = { enable = true },
-      -- enable autotagging (w/ nvim-ts-autotag plugin)
-      autotag = {
-        enable = true,
-      },
-      -- ensure these language parsers are installed
-      ensure_installed = {
+  {
+    "nvim-treesitter/nvim-treesitter",
+    branch = "main", -- `master` is frozen and does not support Nvim 0.12
+    lazy = false, -- main branch does not support lazy-loading
+    build = ":TSUpdate",
+    config = function()
+      -- ensure these language parsers are installed (async, no-op when present)
+      require("nvim-treesitter").install({
         "json",
         "javascript",
         "typescript",
@@ -44,16 +29,33 @@ return {
         "c",
         "rust",
         "toml",
-      },
-      incremental_selection = {
-        enable = true,
-        keymaps = {
-          init_selection = "<C-space>",
-          node_incremental = "<C-space>",
-          scope_incremental = false,
-          node_decremental = "<bs>",
-        },
-      },
-    })
-  end,
+      })
+
+      -- highlighting + indentation for every buffer that has a parser
+      vim.api.nvim_create_autocmd("FileType", {
+        group = vim.api.nvim_create_augroup("UserTreesitter", { clear = true }),
+        callback = function(args)
+          local lang = vim.treesitter.language.get_lang(args.match)
+          if not lang or not pcall(vim.treesitter.start, args.buf, lang) then
+            return
+          end
+          if vim.treesitter.query.get(lang, "indents") then
+            vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+          end
+        end,
+      })
+
+      -- incremental selection (built into Nvim 0.12 as `an` / `in` in visual mode)
+      vim.keymap.set("n", "<C-space>", "van", { remap = true, desc = "Start treesitter selection" })
+      vim.keymap.set("x", "<C-space>", "an", { remap = true, desc = "Expand treesitter selection" })
+      vim.keymap.set("x", "<bs>", "in", { remap = true, desc = "Shrink treesitter selection" })
+    end,
+  },
+
+  -- auto close/rename html & jsx tags
+  {
+    "windwp/nvim-ts-autotag",
+    event = { "BufReadPre", "BufNewFile" },
+    opts = {},
+  },
 }

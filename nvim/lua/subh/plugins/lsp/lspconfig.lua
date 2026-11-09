@@ -1,23 +1,13 @@
 return {
-  "neovim/nvim-lspconfig",
+  "neovim/nvim-lspconfig", -- provides the server configs (lsp/*.lua) consumed by vim.lsp.config
   event = { "BufReadPre", "BufNewFile" },
   dependencies = {
     "hrsh7th/cmp-nvim-lsp",
     { "antosha417/nvim-lsp-file-operations", config = true },
-    { "folke/neodev.nvim", opts = {} },
-    "williamboman/mason.nvim",
-    "williamboman/mason-lspconfig.nvim",
+    "mason-org/mason.nvim",
+    "mason-org/mason-lspconfig.nvim",
   },
   config = function()
-    -- import lspconfig plugin
-    local lspconfig = require("lspconfig")
-
-    -- import mason_lspconfig plugin
-    local mason_lspconfig = require("mason-lspconfig")
-
-    -- import cmp-nvim-lsp plugin
-    local cmp_nvim_lsp = require("cmp_nvim_lsp")
-
     local keymap = vim.keymap -- for conciseness
 
     vim.api.nvim_create_autocmd("LspAttach", {
@@ -53,101 +43,96 @@ return {
         keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics bufnr=0<CR>", opts) -- show  diagnostics for file
 
         opts.desc = "Show line diagnostics"
-        keymap.set("n", "<leader>ed", vim.diagnostic.open_float, opts) -- show diagnostics for line0:
+        keymap.set("n", "<leader>ed", vim.diagnostic.open_float, opts) -- show diagnostics for line
 
         opts.desc = "Go to previous diagnostic"
-        keymap.set("n", "[d", vim.diagnostic.goto_prev, opts) -- jump to previous diagnostic in buffer
+        keymap.set("n", "[d", function()
+          vim.diagnostic.jump({ count = -1, float = true })
+        end, opts) -- jump to previous diagnostic in buffer
 
         opts.desc = "Go to next diagnostic"
-        keymap.set("n", "]d", vim.diagnostic.goto_next, opts) -- jump to next diagnostic in buffer
+        keymap.set("n", "]d", function()
+          vim.diagnostic.jump({ count = 1, float = true })
+        end, opts) -- jump to next diagnostic in buffer
 
         opts.desc = "Show documentation for what is under cursor"
         keymap.set("n", "K", vim.lsp.buf.hover, opts) -- show documentation for what is under cursor
 
         opts.desc = "Restart LSP"
-        keymap.set("n", "<leader>rs", ":LspRestart<CR>", opts) -- mapping to restart lsp if necessary
+        keymap.set("n", "<leader>rs", "<cmd>lsp restart<CR>", opts) -- mapping to restart lsp if necessary
       end,
     })
 
-    -- used to enable autocompletion (assign to every lsp server config)
-    local capabilities = cmp_nvim_lsp.default_capabilities()
-
     -- Change the Diagnostic symbols in the sign column (gutter)
     local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
-    for type, icon in pairs(signs) do
-      local hl = "DiagnosticSign" .. type
-      vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-    end
+    local severity = vim.diagnostic.severity
+    vim.diagnostic.config({
+      signs = {
+        text = {
+          [severity.ERROR] = signs.Error,
+          [severity.WARN] = signs.Warn,
+          [severity.HINT] = signs.Hint,
+          [severity.INFO] = signs.Info,
+        },
+      },
+    })
 
-    -- NEW API: use handlers inside setup() instead of setup_handlers()
-    mason_lspconfig.setup({
-      handlers = {
-        -- default handler for installed servers
-        function(server_name)
-          lspconfig[server_name].setup({
-            capabilities = capabilities,
-          })
-        end,
-        ["svelte"] = function()
-          -- configure svelte server
-          lspconfig["svelte"].setup({
-            capabilities = capabilities,
-            on_attach = function(client, bufnr)
-              vim.api.nvim_create_autocmd("BufWritePost", {
-                pattern = { "*.js", "*.ts" },
-                callback = function(ctx)
-                  -- Here use ctx.match instead of ctx.file
-                  client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.match })
-                end,
-              })
-            end,
-          })
-        end,
-        ["graphql"] = function()
-          -- configure graphql language server
-          lspconfig["graphql"].setup({
-            capabilities = capabilities,
-            filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
-          })
-        end,
-        ["emmet_ls"] = function()
-          -- configure emmet language server
-          lspconfig["emmet_ls"].setup({
-            capabilities = capabilities,
-            filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" },
-          })
-        end,
-        ["lua_ls"] = function()
-          -- configure lua server (with special settings)
-          lspconfig["lua_ls"].setup({
-            capabilities = capabilities,
-            settings = {
-              Lua = {
-                -- make the language server recognize "vim" global
-                diagnostics = {
-                  globals = { "vim" },
-                },
-                completion = {
-                  callSnippet = "Replace",
-                },
-              },
-            },
-          })
-        end,
-        ["rust_analyzer"] = function()
-          lspconfig["rust_analyzer"].setup({
-            capabilities = capabilities,
-            settings = {
-              ["rust-analyzer"] = {
-                cargo = { features = "all" },
-                checkOnSave = true,
-                check = { command = "clippy" },
-                imports = { group = { enable = false } },
-                completion = { postfix = { enable = false } },
-              },
-            },
-          })
-        end,
+    -- used to enable autocompletion (applied to every lsp server config)
+    vim.lsp.config("*", {
+      capabilities = require("cmp_nvim_lsp").default_capabilities(),
+    })
+
+    -- per-server overrides, merged on top of nvim-lspconfig's defaults
+    vim.lsp.config("graphql", {
+      filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
+    })
+
+    vim.lsp.config("emmet_ls", {
+      filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" },
+    })
+
+    vim.lsp.config("lua_ls", {
+      settings = {
+        Lua = {
+          -- make the language server recognize "vim" global
+          diagnostics = {
+            globals = { "vim" },
+          },
+          completion = {
+            callSnippet = "Replace",
+          },
+        },
+      },
+    })
+
+    vim.lsp.config("rust_analyzer", {
+      settings = {
+        ["rust-analyzer"] = {
+          cargo = { features = "all" },
+          checkOnSave = true,
+          check = { command = "clippy" },
+          imports = { group = { enable = false } },
+          completion = { postfix = { enable = false } },
+        },
+      },
+    })
+
+    -- install servers; every installed server is enabled via vim.lsp.enable()
+    require("mason-lspconfig").setup({
+      ensure_installed = {
+        "ts_ls",
+        "html",
+        "cssls",
+        "tailwindcss",
+        "svelte",
+        "lua_ls",
+        "graphql",
+        "emmet_ls",
+        "prismals",
+        "pyright",
+        "rust_analyzer",
+        "taplo",
+        "clangd",
       },
     })
   end,
