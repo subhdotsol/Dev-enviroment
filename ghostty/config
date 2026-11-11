@@ -1,0 +1,13 @@
+title = " "
+
+macos-option-as-alt = true
+
+macos-titlebar-proxy-icon = hidden
+
+window-padding-balance = true
+
+theme = Gruvbox Dark
+
+bell-features = no-attention
+
+font-size = 17

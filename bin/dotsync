@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+# dotsync: keep this dotfiles repo and GitHub in step.
+#   dotsync status          link health + uncommitted changes
+#   dotsync push [message]  secret-scan, commit everything, push
+#   dotsync pull            fast-forward pull, then re-link
+#   dotsync scan [--staged] look for secrets (gitleaks, else built-in patterns)
+set -euo pipefail
+
+# Resolve through symlinks (no readlink -f: not on old macOS) to find the repo.
+src="${BASH_SOURCE[0]}"
+while [ -L "$src" ]; do
+  dir="$(cd "$(dirname "$src")" && pwd)"
+  src="$(readlink "$src")"
+  case "$src" in /*) ;; *) src="$dir/$src" ;; esac
+done
+DOTFILES="$(cd "$(dirname "$src")/.." && pwd)"
+cd "$DOTFILES"
+
+die() { echo "dotsync: $*" >&2; exit 1; }
+
+PATTERNS='sk-ant-[A-Za-z0-9_-]{20,}|sk-[A-Za-z0-9]{32,}|gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|AKIA[0-9A-Z]{16}|xox[baprs]-[A-Za-z0-9-]{10,}|-----BEGIN [A-Z ]*PRIVATE KEY-----|(API_KEY|SECRET|TOKEN|PASSWORD|PASSWD)[A-Z_]*[[:space:]]*=[[:space:]]*["'"'"']?[A-Za-z0-9_/+=-]{16,}'
+
+scan() {
+  local staged=0 hits rc=0
+  [ "${1:-}" = "--staged" ] && staged=1
+
+  # Built-in patterns always run: gitleaks' entropy filter skips obvious
+  # fakes, and this keeps the check working where gitleaks is not installed.
+  if [ "$staged" -eq 1 ]; then
+    hits="$(git diff --cached -U0 --no-color | grep -E '^\+[^+]' | grep -E "$PATTERNS" || true)"
+  else
+    hits="$(git ls-files -co --exclude-standard | xargs grep -nIE "$PATTERNS" 2>/dev/null || true)"
+  fi
+  if [ -n "$hits" ]; then
+    echo "dotsync: possible secrets (values hidden):" >&2
+    echo "$hits" | sed -E 's/(=[[:space:]]*["'"'"']?).{4,}/\1<hidden>/' | cut -c1-120 >&2
+    rc=1
+  fi
+
+  if command -v gitleaks >/dev/null 2>&1; then
+    if [ "$staged" -eq 1 ]; then
+      gitleaks git --staged --redact --no-banner . || rc=1
+    else
+      gitleaks dir --redact --no-banner . || rc=1
+    fi
+  fi
+  return "$rc"
+}
+
+status() {
+  local bad=0 src dst
+  while IFS='|' read -r src dst; do
+    [ -n "$src" ] || continue
+    if [ -L "$dst" ] && [ "$(readlink "$dst")" = "$DOTFILES/$src" ]; then
+      echo "ok       $dst"
+    elif [ -e "$dst" ] || [ -L "$dst" ]; then
+      echo "NOT LINK $dst (differs from repo; run ./install.sh)"; bad=1
+    else
+      echo "MISSING  $dst (run ./install.sh)"; bad=1
+    fi
+  done <<LINKS
+nvim|$HOME/.config/nvim
+tmux/tmux.conf|$HOME/.tmux.conf
+zsh/zshrc|$HOME/.zshrc
+bin/todo|$HOME/.local/bin/todo
+bin/dotsync|$HOME/.local/bin/dotsync
+LINKS
+  echo
+  git status -sb
+  return "$bad"
+}
+
+case "${1:-status}" in
+  status) status || true ;;
+  scan)   shift; scan "$@" ;;
+  push)
+    shift
+    scan || die "refusing to push; remove the secrets above"
+    git add -A
+    if git diff --cached --quiet; then
+      echo "nothing to commit"
+    else
+      git commit -m "${*:-update dotfiles $(date +%Y-%m-%d)}"
+    fi
+    git push
+    ;;
+  pull)
+    git pull --ff-only
+    "$DOTFILES/install.sh"
+    ;;
+  *)
+    sed -n '2,6p' "$0" | sed 's/^# \{0,1\}//' >&2
+    exit 1
+    ;;
+esac

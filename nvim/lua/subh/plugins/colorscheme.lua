@@ -76,9 +76,12 @@ return {
     lazy = false,
     config = function()
       require("gruvbox").setup({
-        contrast = "hard", -- soft, medium, hard
+        overrides = {
+          Comment = { italic = true, fg = "#928374" },
+        },
       })
-      vim.cmd([[colorscheme gruvbox]])
+      vim.o.background = "dark"
+      vim.cmd.colorscheme("gruvbox")
     end,
   },
 
