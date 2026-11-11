@@ -48,12 +48,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
 
-# arcium completions, generated on demand instead of vendoring ~1400 lines
-if command -v arcium >/dev/null; then
-  (( $+functions[compdef] )) || { autoload -Uz compinit && compinit; }
-  source <(arcium completions zsh)
-fi
-
 # wakatime
 path_prepend "$HOME/.wakatime"
 command -v terminal-wakatime >/dev/null && eval "$(terminal-wakatime init)"

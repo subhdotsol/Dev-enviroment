@@ -1,16 +1,6 @@
 # Binaries on your PATH dirs that no package manager list covers.
 # Decide for each: add an installer to installers.tsv, add the crate to cargo.txt, or ignore.
 aaahhh
-arcium
-arcium-0.10.1
-arcium-0.10.3
-arcium-0.10.4
-arcium-0.11.0
-arcium-0.12.0
-arcium-0.14.1
-arcium-0.9.2
-arcium-0.9.7
-arcup
 banger
 cargo-asm
 cargo-build-sbpf
