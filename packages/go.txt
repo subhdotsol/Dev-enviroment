@@ -1,0 +1,2 @@
+golang.org/x/tools/gopls
+honnef.co/go/tools/cmd/staticcheck

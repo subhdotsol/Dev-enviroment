@@ -1,0 +1,5 @@
+rustup	command -v rustup	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y	rustup update
+bun	command -v bun	curl -fsSL https://bun.sh/install | bash	bun upgrade
+solana	command -v solana	sh -c "$(curl -sSfL https://release.anza.xyz/stable/install)"	agave-install update
+foundry	command -v forge || test -x $HOME/.foundry/bin/forge	curl -L https://foundry.paradigm.xyz | bash && $HOME/.foundry/bin/foundryup	$HOME/.foundry/bin/foundryup
+avm	command -v avm	cargo install --git https://github.com/coral-xyz/anchor avm --force	avm update

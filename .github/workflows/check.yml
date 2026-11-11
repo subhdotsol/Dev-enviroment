@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: shellcheck
-        run: shellcheck install.sh bootstrap.sh bin/todo bin/dotsync .githooks/pre-commit
+        run: shellcheck install.sh bootstrap.sh bin/todo bin/dotsync bin/devtools .githooks/pre-commit
       - name: zsh syntax
         run: |
           sudo apt-get update && sudo apt-get install -y zsh
@@ -47,7 +47,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: bootstrap (packages + links + plugins)
-        run: ./bootstrap.sh
+        run: ./bootstrap.sh --core
 
       - name: second run changes nothing
         run: ./install.sh | tee out.txt && ! grep -E '^(link|moved)' out.txt
@@ -57,6 +57,12 @@ jobs:
           export PATH="$HOME/.local/bin:$PATH"
           dotsync status | tee status.txt
           ! grep -E '^(NOT LINK|MISSING)' status.txt
+
+      - name: devtools lists what it recorded
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          devtools list | grep -q Brewfile
+          devtools install --dry-run --only rustup | grep -q 'rustup toolchain install'
 
       - name: todo works
         run: |

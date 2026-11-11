@@ -64,6 +64,7 @@ tmux/tmux.conf|$HOME/.tmux.conf
 zsh/zshrc|$HOME/.zshrc
 bin/todo|$HOME/.local/bin/todo
 bin/dotsync|$HOME/.local/bin/dotsync
+bin/devtools|$HOME/.local/bin/devtools
 LINKS
   echo
   git status -sb

@@ -40,6 +40,7 @@ link tmux/tmux.conf "$HOME/.tmux.conf"
 link zsh/zshrc "$HOME/.zshrc"
 link bin/todo "$HOME/.local/bin/todo"
 link bin/dotsync "$HOME/.local/bin/dotsync"
+link bin/devtools "$HOME/.local/bin/devtools"
 
 case "$OS" in
   Darwin) link ghostty/config "$HOME/Library/Application Support/com.mitchellh.ghostty/config" ;;

@@ -3,11 +3,20 @@
 # links the configs (install.sh) and installs the nvim plugins.
 # Supports macOS (Homebrew), Arch (pacman) and Debian/Ubuntu (apt).
 # Idempotent. `--dry-run` prints every command without running it.
+# `--core` stops after the essentials; by default `devtools install` then
+# restores everything recorded in packages/ (apps, fonts, language tools).
 set -euo pipefail
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DRY_RUN=0
-[ "${1:-}" = "--dry-run" ] && DRY_RUN=1
+CORE=0
+for arg in "$@"; do
+  case "$arg" in
+    --dry-run) DRY_RUN=1 ;;
+    --core)    CORE=1 ;;
+    *) echo "usage: $0 [--dry-run] [--core]" >&2; exit 1 ;;
+  esac
+done
 
 SUDO=""
 [ "$(id -u)" -ne 0 ] && SUDO="sudo"
@@ -140,6 +149,16 @@ if [ "$DRY_RUN" -eq 1 ]; then
   "$DOTFILES/install.sh" --dry-run
 else
   "$DOTFILES/install.sh"
+fi
+
+# ---- everything else recorded in packages/ ----------------------------------
+if [ "$CORE" -eq 0 ]; then
+  say "devtools install (packages/)"
+  if [ "$DRY_RUN" -eq 1 ]; then
+    "$DOTFILES/bin/devtools" install --dry-run
+  else
+    "$DOTFILES/bin/devtools" install
+  fi
 fi
 
 # ---- plugins ----------------------------------------------------------------
