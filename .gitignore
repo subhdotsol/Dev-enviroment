@@ -3,3 +3,6 @@ scilla.toml
 .DS_Store
 *.local
 .zshrc.local
+btop/
+github-copilot/
+raycast/
