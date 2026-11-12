@@ -1,5 +1,14 @@
 # dotfiles
 
+<img align="center" src="assets/banner.svg" alt="dotfiles: one config for macOS and Linux" width="100%">
+
+<p align="center">
+  <a href="https://github.com/AvhiMaz/dotfiles/actions/workflows/check.yml"><img src="https://github.com/AvhiMaz/dotfiles/actions/workflows/check.yml/badge.svg" alt="check"></a>
+  <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux-blue" alt="macOS | Linux">
+  <img src="https://img.shields.io/badge/neovim-0.12%2B-57A143" alt="neovim 0.12+">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="MIT license"></a>
+</p>
+
 My terminal setup for **macOS**, **Arch** and **Debian/Ubuntu**: Neovim, tmux, Ghostty, zsh.
 One config for every machine; the few real OS differences live in `zsh/darwin.zsh` and `zsh/linux.zsh`.
 

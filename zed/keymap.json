@@ -1,0 +1,64 @@
+
+[
+  {
+    "context": "Workspace",
+    "bindings": {
+      "cmd-k cmd-l": "terminal_panel::ToggleFocus",
+
+      // Toggle terminal open / close
+      "space t t": "workspace::ToggleBottomDock",
+    }
+  },
+
+  {
+    "context": "Editor && vim_mode == normal",
+    "bindings": {
+      // Save current file
+      "space w": "workspace::Save",
+
+      // Toggle sidebar
+      "space e e": "workspace::ToggleLeftDock",
+
+      // Find file
+      "space f f": "file_finder::Toggle",
+
+      // Window / pane management
+      "space s v": "pane::SplitRight",
+      "space s h": "pane::SplitDown",
+      "space s x": "pane::CloseActiveItem",
+
+      // Tabs / items
+      "space t o": "workspace::NewFile",
+      "space t x": "pane::CloseActiveItem",
+      "space t n": "pane::ActivateNextItem",
+      "space t p": "pane::ActivatePreviousItem",
+
+      // Move between panes
+      "ctrl-h": "workspace::ActivatePaneLeft",
+      "ctrl-l": "workspace::ActivatePaneRight",
+      "ctrl-j": "workspace::ActivatePaneDown",
+      "ctrl-k": "workspace::ActivatePaneUp"
+    }
+  },
+
+  {
+    "context": "ProjectPanel && not_editing",
+    "bindings": {
+      // Ctrl+L → go back to editor
+      "ctrl-l": "vim::ToggleProjectPanelFocus",
+
+      // File operations
+      "a": "project_panel::NewFile",
+      "d": "project_panel::Delete",
+      "r": "project_panel::Rename"
+    }
+  },
+
+  {
+    "context": "Editor && vim_mode == insert",
+    "bindings": {
+      // ii → escape to normal mode
+      "i i": "vim::NormalBefore"
+    }
+  }
+]

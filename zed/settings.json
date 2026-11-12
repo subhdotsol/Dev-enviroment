@@ -1,4 +1,5 @@
 {
+  "cli_default_open_behavior": "new_window",
   "icon_theme": {
     "mode": "system",
     "light": "Zed (Default)",
@@ -29,4 +30,7 @@
     "light": "Ayu Light",
     "dark": "Ayu Darker",
   },
+    "project_panel": {
+      "dock": "left"
+  }
 }
