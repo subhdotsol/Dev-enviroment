@@ -25,6 +25,12 @@ vim.keymap.set("n", "<leader>d", vim.lsp.buf.definition, { noremap = true, silen
 -- Show hover docs
 vim.keymap.set("n", "K", vim.lsp.buf.hover, { noremap = true, silent = true })
 
+-- disable arrow keys (forces hjkl usage)
+keymap.set({ "n", "i", "v" }, "<Up>", "<Nop>")
+keymap.set({ "n", "i", "v" }, "<Down>", "<Nop>")
+keymap.set({ "n", "i", "v" }, "<Left>", "<Nop>")
+keymap.set({ "n", "i", "v" }, "<Right>", "<Nop>")
+
 -- clear search highlights
 keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
 

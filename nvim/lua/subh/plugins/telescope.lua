@@ -34,5 +34,14 @@ return {
     keymap.set("n", "<leader>fs", "<cmd>Telescope live_grep<cr>", { desc = "Find string in cwd" })
     keymap.set("n", "<leader>fc", "<cmd>Telescope grep_string<cr>", { desc = "Find string under cursor in cwd" })
     keymap.set("n", "<leader>ft", "<cmd>TodoTelescope<cr>", { desc = "Find todos" })
+    keymap.set("n", "<leader>fF", function()
+      require("subh.configs.telescope-dir").pick_dir()
+    end, { desc = "Pick directory then find files" })
+    keymap.set("n", "<leader>fA", function()
+      require("subh.configs.telescope-dir").find_files_anywhere()
+    end, { desc = "Find files anywhere (from home)" })
+    keymap.set("n", "<leader>fT", function()
+      require("subh.configs.terminal-picker").pick()
+    end, { desc = "Pick terminal" })
   end,
 }

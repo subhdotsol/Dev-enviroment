@@ -79,8 +79,15 @@ jobs:
           test "$(tmux show -gv prefix)" = C-a
           tmux kill-server
 
-      - name: nvim starts with no errors
+      - name: install nvim plugins from lockfile
         run: |
           export PATH="$HOME/.local/bin:$PATH"
-          nvim --headless +qa 2>&1 | tee nvim.txt
-          ! grep -iE 'error|E[0-9]{3,4}:' nvim.txt
+          nvim --headless "+Lazy! restore" +qa
+
+      - name: nvim startup health check
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          nvim --headless -c "luafile .github/scripts/nvim-startup.lua" nvim/init.lua
+
+      - name: lockfile unchanged
+        run: git diff --exit-code nvim/lazy-lock.json

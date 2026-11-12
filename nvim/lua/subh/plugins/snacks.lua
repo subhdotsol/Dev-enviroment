@@ -35,7 +35,25 @@ return {
           border = "rounded",
         },
       },
+      scroll = {
+        enabled = true,
+      },
+      indent = {
+        enabled = true,
+        char = "┊",
+      },
+      git = {
+        enabled = true,
+      },
+      lazygit = {
+        enabled = true,
+      },
     })
+
+    -- LazyGit (same shortcut as before)
+    vim.keymap.set("n", "<leader>lg", function()
+      Snacks.lazygit()
+    end, { desc = "Open lazy git" })
 
     -- Float terminal (Ctrl+T to toggle, works in normal and terminal mode)
     vim.keymap.set({ "n", "t" }, "<C-t>", function()

@@ -83,18 +83,11 @@ return {
     })
 
     -- per-server overrides, merged on top of nvim-lspconfig's defaults
-    vim.lsp.config("graphql", {
-      filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
-    })
-
-    vim.lsp.config("emmet_ls", {
-      filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" },
-    })
+    -- (rust_analyzer is managed by rustaceanvim, not here)
 
     vim.lsp.config("lua_ls", {
       settings = {
         Lua = {
-          -- make the language server recognize "vim" global
           diagnostics = {
             globals = { "vim" },
           },
@@ -105,14 +98,14 @@ return {
       },
     })
 
-    vim.lsp.config("rust_analyzer", {
+    vim.lsp.config("gopls", {
       settings = {
-        ["rust-analyzer"] = {
-          cargo = { features = "all" },
-          checkOnSave = true,
-          check = { command = "clippy" },
-          imports = { group = { enable = false } },
-          completion = { postfix = { enable = false } },
+        gopls = {
+          gofumpt = true,
+          staticcheck = true,
+          analyses = {
+            shadow = true,
+          },
         },
       },
     })
@@ -124,14 +117,10 @@ return {
         "html",
         "cssls",
         "tailwindcss",
-        "svelte",
+        "eslint",
+        "jsonls",
+        "gopls",
         "lua_ls",
-        "graphql",
-        "emmet_ls",
-        "prismals",
-        "pyright",
-        "rust_analyzer",
-        "taplo",
         "clangd",
       },
     })
