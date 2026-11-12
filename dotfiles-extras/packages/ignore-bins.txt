@@ -1,0 +1,37 @@
+# Binaries that devtools inventory should not report as "unknown source".
+# rustup proxies
+cargo
+cargo-clippy
+cargo-fmt
+cargo-miri
+clippy-driver
+rls
+rust-analyzer
+rust-gdb
+rust-gdbgui
+rust-lldb
+rustc
+rustdoc
+rustfmt
+rustup
+# provided by crates listed in cargo.txt
+cargo-add
+cargo-expand
+cargo-generate
+cargo-hack
+cargo-near
+cargo-nextest
+cargo-rm
+cargo-set-version
+cargo-sqlx
+cargo-upgrade
+chess-tui
+dx
+rustlings
+sqlx
+# provided by installers.tsv
+anchor
+avm
+# provided by the solana installer
+cargo-build-sbf
+cargo-test-sbf

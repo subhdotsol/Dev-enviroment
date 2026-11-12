@@ -1,0 +1,120 @@
+#!/usr/bin/env bash
+# todo: tiny terminal todo manager. Tasks live in ~/.todos.txt (override with
+# $TODO_FILE) as "[ ] text" / "[x] text". Numbers always count PENDING tasks
+# only (1, 2, 3...), so `todo list` and `todo done N` agree.
+set -euo pipefail
+
+FILE="${TODO_FILE:-$HOME/.todos.txt}"
+[ -f "$FILE" ] || : > "$FILE"
+
+usage() {
+  cat <<'USAGE'
+Usage:
+  todo                  list pending tasks
+  todo add <task>       add a task                (a)
+  todo list             list pending tasks        (l)
+  todo all              pending + completed
+  todo done <n>         mark pending task n done  (d)
+  todo remove <n>       delete pending task n     (r)
+  todo clear            delete completed tasks    (c)
+  todo stats            counts and progress       (s)
+  todo display          compact list for prompts
+USAGE
+}
+
+die() { echo "todo: $*" >&2; exit 1; }
+
+pending_count() { grep -c '^\[ \] ' "$FILE" || true; }
+
+# validate_n <arg>: must be an integer within 1..pending
+validate_n() {
+  case "${1:-}" in
+    ''|*[!0-9]*) die "need a task number (see: todo list)" ;;
+  esac
+  local total
+  total="$(pending_count)"
+  [ "$1" -ge 1 ] && [ "$1" -le "$total" ] || die "no pending task $1 (have $total)"
+}
+
+# rewrite_pending <n> <awk action>: apply awk action to the nth pending line
+rewrite_pending() {
+  local n="$1" action="$2" tmp
+  tmp="$(mktemp)"
+  awk -v n="$n" '
+    /^\[ \] / { i++; if (i == n) { '"$action"' } }
+    { print }
+  ' "$FILE" > "$tmp"
+  mv "$tmp" "$FILE"
+}
+
+list_pending() {
+  if [ "$(pending_count)" -eq 0 ]; then
+    echo "No pending tasks"
+    return
+  fi
+  awk '/^\[ \] / { printf "%4d  %s\n", ++i, substr($0, 5) }' "$FILE"
+}
+
+cmd="${1:-list}"
+[ $# -gt 0 ] && shift
+
+case "$cmd" in
+  add|a)
+    [ $# -gt 0 ] || die "usage: todo add <task>"
+    printf '[ ] %s\n' "$*" >> "$FILE"
+    echo "Added: $*"
+    ;;
+  list|l)
+    list_pending
+    ;;
+  all)
+    echo "Pending:"
+    list_pending
+    echo
+    echo "Completed:"
+    if grep -q '^\[x\] ' "$FILE"; then
+      awk '/^\[x\] / { printf "      %s\n", substr($0, 5) }' "$FILE"
+    else
+      echo "  none"
+    fi
+    ;;
+  done|d)
+    validate_n "${1:-}"
+    rewrite_pending "$1" 'sub(/^\[ \]/, "[x]")'
+    echo "Done: task $1"
+    ;;
+  remove|rm|r)
+    validate_n "${1:-}"
+    rewrite_pending "$1" 'next'
+    echo "Removed: task $1"
+    ;;
+  clear|c)
+    tmp="$(mktemp)"
+    grep -v '^\[x\] ' "$FILE" > "$tmp" || true
+    mv "$tmp" "$FILE"
+    echo "Cleared completed tasks"
+    ;;
+  stats|s)
+    pending="$(pending_count)"
+    done_n="$(grep -c '^\[x\] ' "$FILE" || true)"
+    total=$((pending + done_n))
+    echo "Total:     $total"
+    echo "Pending:   $pending"
+    echo "Completed: $done_n"
+    [ "$total" -gt 0 ] && echo "Progress:  $((done_n * 100 / total))%"
+    ;;
+  display)
+    awk '/^\[ \] / {
+      t = substr($0, 5)
+      if (length(t) > 47) t = substr(t, 1, 44) "..."
+      printf "  %d  %s\n", ++i, t
+    } END { if (!i) print "  No pending tasks" }' "$FILE"
+    ;;
+  help|-h|--help)
+    usage
+    ;;
+  *)
+    usage >&2
+    exit 1
+    ;;
+esac

@@ -71,7 +71,7 @@ install_arch() {
   say "pacman"
   run $SUDO pacman -Syu --needed --noconfirm \
     git github-cli base-devel curl unzip neovim tmux zsh starship zoxide fzf bat \
-    ripgrep fd lazygit tree-sitter-cli gitleaks shellcheck
+    ripgrep fd lazygit tree-sitter gitleaks shellcheck
 }
 
 install_debian() {

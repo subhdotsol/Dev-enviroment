@@ -1,0 +1,5 @@
+# Copy to ~/.zshrc.local and fill in. That file is sourced last by zshrc and is
+# never committed. Put API keys and one-machine paths here.
+#
+# export ANTHROPIC_API_KEY="your-key-here"
+# path_prepend "$HOME/Desktop/code-playground/oss/goose/build"

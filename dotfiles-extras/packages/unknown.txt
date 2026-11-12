@@ -1,0 +1,30 @@
+# Binaries on your PATH dirs that no package manager list covers.
+# Decide for each: add an installer to installers.tsv, add the crate to cargo.txt, or ignore.
+aaahhh
+banger
+cargo-asm
+cargo-build-sbpf
+cargo-topcoat
+charms
+checkgit
+devin
+fuck
+jcode
+kora
+kora-cli
+mimik
+pyron
+quasar
+rtk
+sbpf
+sbpf-linker
+scilla
+sentio
+stdio-fixture
+surfpool
+todo
+topcoat
+torflix
+trak
+tubesaver
+vimgram

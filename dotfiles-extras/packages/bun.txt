@@ -1,0 +1,8 @@
+@anthropic-ai/claude-code
+@magicblock-labs/ephemeral-validator
+eas-cli
+netlify-cli
+pinata
+snarkjs
+turbo
+vercel

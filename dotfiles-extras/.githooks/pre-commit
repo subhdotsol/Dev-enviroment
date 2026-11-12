@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Block commits that add secrets. Enabled by install.sh (core.hooksPath).
+exec "$(git rev-parse --show-toplevel)/bin/dotsync" scan --staged

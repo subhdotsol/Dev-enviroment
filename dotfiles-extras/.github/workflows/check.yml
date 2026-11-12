@@ -1,0 +1,91 @@
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "0 6 * * 1"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: shellcheck
+        run: shellcheck install.sh bootstrap.sh bin/todo bin/dotsync bin/devtools .githooks/pre-commit
+      - name: zsh syntax
+        run: |
+          sudo apt-get update && sudo apt-get install -y zsh
+          for f in zsh/zshrc zsh/darwin.zsh zsh/linux.zsh; do zsh -n "$f"; done
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  install:
+    name: install (${{ matrix.name }})
+    runs-on: ${{ matrix.os }}
+    container: ${{ matrix.container }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: debian, os: ubuntu-latest, container: "" }
+          - { name: arch, os: ubuntu-latest, container: "archlinux:latest" }
+          - { name: macos, os: macos-latest, container: "" }
+    steps:
+      - name: prerequisites (arch container)
+        if: matrix.name == 'arch'
+        run: pacman -Syu --noconfirm git
+      - uses: actions/checkout@v4
+
+      - name: bootstrap (packages + links + plugins)
+        run: ./bootstrap.sh --core
+
+      - name: second run changes nothing
+        run: ./install.sh | tee out.txt && ! grep -E '^(link|moved)' out.txt
+
+      - name: links are healthy
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          dotsync status | tee status.txt
+          ! grep -E '^(NOT LINK|MISSING)' status.txt
+
+      - name: devtools lists what it recorded
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          devtools list | grep -q Brewfile
+          devtools install --dry-run --only rustup | grep -q 'rustup toolchain install'
+
+      - name: todo works
+        run: |
+          export PATH="$HOME/.local/bin:$PATH" TODO_FILE="$RUNNER_TEMP/todos.txt"
+          todo add one && todo add two && todo done 1 && test "$(todo list | wc -l)" -eq 1
+          todo stats | grep -q 'Progress:  50%'
+
+      - name: interactive zsh starts clean
+        run: |
+          out="$(TERM=xterm-256color zsh -i -c 'echo ok' 2>&1)"
+          echo "$out"
+          echo "$out" | grep -qx ok
+          ! echo "$out" | grep -iE 'command not found|no such file|error'
+
+      - name: tmux config loads
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          tmux -f "$HOME/.tmux.conf" new-session -d -s ci
+          test "$(tmux show -gv prefix)" = C-a
+          tmux kill-server
+
+      - name: nvim starts with no errors
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          nvim --headless +qa 2>&1 | tee nvim.txt
+          ! grep -iE 'error|E[0-9]{3,4}:' nvim.txt

@@ -1,0 +1,13 @@
+# Crates reinstalled by `devtools install` and refreshed by `devtools upgrade`.
+# Curated by hand: cargo cannot list crates installed from a path or git, and
+# many binaries in ~/.cargo/bin are your own projects (see unknown.txt).
+cargo-edit
+cargo-expand
+cargo-generate
+cargo-hack
+cargo-nextest
+cargo-near
+chess-tui
+dioxus-cli
+rustlings
+sqlx-cli
