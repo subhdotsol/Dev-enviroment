@@ -49,26 +49,10 @@ keymap.set("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open current buffer
 
 -- For colour themes (loads all lazy colorscheme plugins first so they appear in the picker)
 vim.keymap.set("n", "<leader>tm", function()
-  -- Load all lazy-loaded colorscheme plugins so they show up in Telescope
   for _, plugin in ipairs(require("lazy").plugins()) do
-    if
-      plugin.name
-      and (
-        plugin.name:match("tokyonight")
-        or plugin.name:match("catppuccin")
-        or plugin.name:match("rose%-pine")
-        or plugin.name:match("kanagawa")
-        or plugin.name:match("gruvbox")
-        or plugin.name:match("sonokai")
-        or plugin.name:match("nord")
-        or plugin.name:match("nightfox")
-        or plugin.name:match("tokyodark")
-        or plugin.name:match("shale")
-      )
-    then
+    if plugin.name and (plugin.name:match("gruvbox") or plugin.name:match("shale")) then
       require("lazy").load({ plugins = { plugin.name } })
     end
   end
-  -- Open Telescope colorscheme picker with live preview
   require("telescope.builtin").colorscheme({ enable_preview = true })
 end, { desc = "Pick theme" })
