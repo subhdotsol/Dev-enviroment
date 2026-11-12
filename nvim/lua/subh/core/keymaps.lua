@@ -31,6 +31,11 @@ keymap.set({ "n", "i", "v" }, "<Down>", "<Nop>")
 keymap.set({ "n", "i", "v" }, "<Left>", "<Nop>")
 keymap.set({ "n", "i", "v" }, "<Right>", "<Nop>")
 
+-- open docs cheatsheet
+vim.api.nvim_create_user_command("Docs", function()
+  vim.cmd("e " .. vim.fn.stdpath("config") .. "/docs.md")
+end, { desc = "Open nvim cheatsheet" })
+
 -- clear search highlights
 keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
 
