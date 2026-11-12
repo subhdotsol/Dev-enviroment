@@ -32,18 +32,13 @@ jobs:
   install:
     name: install (${{ matrix.name }})
     runs-on: ${{ matrix.os }}
-    container: ${{ matrix.container }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - { name: debian, os: ubuntu-latest, container: "" }
-          - { name: arch, os: ubuntu-latest, container: "archlinux:latest" }
-          - { name: macos, os: macos-latest, container: "" }
+          - { name: debian, os: ubuntu-latest }
+          - { name: macos, os: macos-latest }
     steps:
-      - name: prerequisites (arch container)
-        if: matrix.name == 'arch'
-        run: pacman -Syu --noconfirm git
       - uses: actions/checkout@v4
 
       - name: bootstrap (packages + links + plugins)
