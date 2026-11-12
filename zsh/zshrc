@@ -30,6 +30,10 @@ command -v starship >/dev/null && eval "$(starship init zsh)"
 
 alias cn='cargo run'
 alias cb='cargo build'
+alias gs='git status'
+alias ga='git add .'
+alias gl='git log --oneline'
+
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
