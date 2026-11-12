@@ -51,7 +51,9 @@ status() {
   local bad=0 src dst
   while IFS='|' read -r src dst; do
     [ -n "$src" ] || continue
-    if [ -L "$dst" ] && [ "$(readlink "$dst")" = "$DOTFILES/$src" ]; then
+    if [ "$DOTFILES/$src" = "$dst" ]; then
+      echo "ok       $dst (in repo)"
+    elif [ -L "$dst" ] && [ "$(readlink "$dst")" = "$DOTFILES/$src" ]; then
       echo "ok       $dst"
     elif [ -e "$dst" ] || [ -L "$dst" ]; then
       echo "NOT LINK $dst (differs from repo; run ./install.sh)"; bad=1

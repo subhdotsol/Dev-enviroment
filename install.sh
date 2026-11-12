@@ -19,6 +19,13 @@ link() {
     return
   fi
 
+  # When the repo lives inside the target dir (e.g. repo IS ~/.config),
+  # src and dst are the same path — no symlink needed.
+  if [ "$src" = "$dst" ]; then
+    echo "ok    $dst (in repo)"
+    return
+  fi
+
   if [ -L "$dst" ] && [ "$(readlink "$dst")" = "$src" ]; then
     echo "ok    $dst"
     return
