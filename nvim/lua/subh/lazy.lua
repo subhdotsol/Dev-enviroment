@@ -8,6 +8,16 @@ if not vim.uv.fs_stat(lazypath) then
     "--branch=stable", -- latest stable release
     lazypath,
   })
+  -- `Lazy restore` doesn't pin lazy.nvim itself, so check out the locked commit
+  -- here; otherwise a fresh install rewrites lazy-lock.json with upstream HEAD.
+  local ok, lock = pcall(function()
+    local lines = vim.fn.readfile(vim.fn.stdpath("config") .. "/lazy-lock.json")
+    return vim.json.decode(table.concat(lines, "\n"))
+  end)
+  local commit = ok and lock["lazy.nvim"] and lock["lazy.nvim"].commit
+  if commit then
+    vim.fn.system({ "git", "-C", lazypath, "checkout", "--quiet", commit })
+  end
 end
 vim.opt.rtp:prepend(lazypath)
 
