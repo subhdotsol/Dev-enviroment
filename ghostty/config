@@ -11,3 +11,5 @@ theme = Gruvbox Dark
 bell-features = no-attention
 
 font-size = 17
+
+link-url = true
